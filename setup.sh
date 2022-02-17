@@ -70,4 +70,5 @@ make
 
 echo "Built wrk2, so now go ahead and boot instances with sudo docker-compose up -d" >> /local/mertlogs
 
-
+## send email
+mail -s "Deathstar instance finished setting up, hooray!" $(geni-get slice_email)
