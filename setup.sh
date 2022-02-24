@@ -64,6 +64,9 @@ sudo docker build -t mert/social-network-microservices:latest .
 
 echo "Built social network from source" >> /local/mertlogs
 
+python3 scripts/init_social_graph.py --graph=socfb-Reed98
+echo "Initialized social graph" >> /local/mertlogs
+
 ## build workload
 cd wrk2
 make
