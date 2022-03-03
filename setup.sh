@@ -35,7 +35,7 @@ sudo systemctl daemon-reload
 sudo systemctl start docker
 ps aux | grep -i docker | grep -v grep >> /local/mertlogs
 echo "Check above for directory on where docker works" >> /local/mertlogs
-
+sudo chmod -R ugo+rwx /mydata
 
 cd /local
 git clone https://github.com/mtoslalibu/astraea-scripts.git
@@ -61,6 +61,8 @@ cd /local/DeathStarBench/socialNetwork/docker/thrift-microservice-deps/cpp
 sudo docker build -t mert/thrift-microservice-deps:xenial .
 cd /local/DeathStarBench/socialNetwork
 sudo docker build -t mert/social-network-microservices:latest .
+
+sudo chmod -R ugo+rwx /local
 
 echo "Built social network from source" >> /local/mertlogs
 
