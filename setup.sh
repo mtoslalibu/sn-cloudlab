@@ -1,12 +1,24 @@
-sudo apt update
-sudo apt --yes install apt-transport-https ca-certificates curl software-properties-common
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
-apt-cache policy docker-ce
-sudo apt --yes install docker-ce
+sudo apt-get update
+sudo apt-get --yes install \
+    ca-certificates \
+    curl \
+    gnupg
+    
+sudo mkdir -m 0755 -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+echo \
+  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  
+sudo apt-get update
+sudo apt-get --yes install docker-ce docker-ce-cli containerd.io docker-buildx-plugin
+sudo docker --version >> /local/mertlogs
+ 
 sudo curl -L "https://github.com/docker/compose/releases/download/1.27.4/docker-compose-Linux-x86_64" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
-sudo docker-compose –version
+sudo docker-compose --version >> /local/mertlogs
 
 echo "Docker done" >> /local/mertlogs
 
@@ -28,7 +40,7 @@ sudo mkdir /mydata
 sudo /usr/local/etc/emulab/mkextrafs.pl /mydata
 sudo chmod ugo+rwx /mydata
 SEARCH_STRING="ExecStart=/usr/bin/dockerd -H fd://"
-REPLACE_STRING="ExecStart=/usr/bin/dockerd -g /mydata -H fd://"
+REPLACE_STRING="ExecStart=/usr/bin/dockerd --data-root /mydata -H fd://"
 sudo sed -i "s#$SEARCH_STRING#$REPLACE_STRING#" /lib/systemd/system/docker.service
 sudo rsync -aqxP /var/lib/docker/ /mydata
 sudo systemctl daemon-reload
